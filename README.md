@@ -17,6 +17,15 @@ python setup_dynamodb.py
 python app.py          # http://localhost:5000
 ```
 
+## Tests (no AWS needed)
+```bash
+pytest -q   # 9 offline tests, DynamoDB/SNS stubbed
+```
+Manual Epic 7 checklist: `docs/TESTING.md`.
+
+## Deploy (when AWS is ready)
+Guide: `docs/DEPLOY.md`. Assets: `gunicorn.conf.py`, `deploy/stocker.service`, `deploy/user-data.sh`, `deploy/iam-stocker-ec2-policy.json`. CI: `.github/workflows/ci.yml`.
+
 On EC2, omit `AWS_ACCESS_KEY_ID/SECRET` — the instance IAM role (`StockerEC2Role`: DynamoDB on `stocker_*` + `sns:Publish`) provides credentials.
 
 ## DynamoDB schema

@@ -1,0 +1,6 @@
+"""Gunicorn config for Stocker on EC2."""
+bind = "0.0.0.0:5000"
+workers = 3
+timeout = 60
+accesslog = "-"
+errorlog = "-"
