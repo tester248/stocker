@@ -193,6 +193,36 @@ def record_transaction(user_id, stock_id, action, price, quantity, status="COMPL
     return txn
 
 
+def build_enriched_portfolio(user_id):
+    """Return (enriched_holdings, total_value) with live price + P&L.
+
+    Shared by /trader/dashboard and /portfolio so both templates
+    receive the same holding shape.
+    """
+    holdings = get_user_portfolio(user_id)
+    enriched = []
+    total_value = Decimal("0")
+    for h in holdings:
+        stock = get_stock_by_id(h["stock_id"])
+        if not stock:
+            continue
+        qty = Decimal(str(h.get("quantity", 0)))
+        avg = Decimal(str(h.get("average_price", 0)))
+        live = Decimal(str(stock.get("price", 0)))
+        market_value = qty * live
+        total_value += market_value
+        enriched.append({
+            "symbol": stock.get("symbol"),
+            "name": stock.get("name"),
+            "quantity": float(qty),
+            "average_price": float(avg),
+            "live_price": float(live),
+            "market_value": float(market_value),
+            "pnl": float((live - avg) * qty),
+        })
+    return enriched, total_value
+
+
 # ---------- Auth decorators ----------
 def login_required(role=None):
     def deco(fn):
@@ -316,28 +346,7 @@ def dashboard_admin():
 def dashboard_trader():
     user_id = session["user_id"]
     stocks = get_table(STOCK_TABLE).scan(Limit=100).get("Items", [])
-    holdings = get_user_portfolio(user_id)
-    # Enrich holdings with live price + P&L
-    enriched = []
-    total_value = Decimal("0")
-    for h in holdings:
-        stock = get_stock_by_id(h["stock_id"])
-        if not stock:
-            continue
-        qty = Decimal(str(h.get("quantity", 0)))
-        avg = Decimal(str(h.get("average_price", 0)))
-        live = Decimal(str(stock.get("price", 0)))
-        market_value = qty * live
-        total_value += market_value
-        enriched.append({
-            "symbol": stock.get("symbol"),
-            "name": stock.get("name"),
-            "quantity": float(qty),
-            "average_price": float(avg),
-            "live_price": float(live),
-            "market_value": float(market_value),
-            "pnl": float((live - avg) * qty),
-        })
+    enriched, total_value = build_enriched_portfolio(user_id)
     txns = get_user_transactions(user_id)
     return render_template(
         "dashboard_trader.html",
@@ -353,18 +362,13 @@ def dashboard_trader():
 @login_required()
 def portfolio():
     user_id = session["user_id"]
-    holdings = get_user_portfolio(user_id)
-    enriched = []
-    for h in holdings:
-        stock = get_stock_by_id(h["stock_id"])
-        if not stock:
-            continue
-        enriched.append({"holding": clean_dynamo_response(h), "stock": clean_dynamo_response(stock)})
+    enriched, total_value = build_enriched_portfolio(user_id)
     txns = get_user_transactions(user_id, limit=50)
     return render_template(
         "dashboard_trader.html",
         stocks=clean_dynamo_response(get_table(STOCK_TABLE).scan(Limit=100).get("Items", [])),
-        holdings=enriched if enriched and isinstance(enriched[0], dict) and "symbol" in enriched[0] else enriched,
+        holdings=enriched,
+        total_value=float(total_value),
         transactions=clean_dynamo_response(txns),
         user=current_user(),
         view="portfolio",
@@ -524,6 +528,42 @@ def health():
     return {"status": "ok"}
 
 
+@app.errorhandler(404)
+def not_found(e):
+    return render_template("index.html"), 404
+
+
+@app.errorhandler(500)
+def server_error(e):
+    return render_template("index.html"), 500
+
+
+@app.cli.command("create-admin")
+def create_admin():
+    """Create an admin user without the signup form. Usage: flask create-admin"""
+    import getpass
+    username = input("Username: ").strip()
+    email = input("Email: ").lower().strip()
+    password = getpass.getpass("Password (min 6): ")
+    if not username or not email or len(password) < 6:
+        print("Invalid input.")
+        return
+    if get_user_by_email(email):
+        print("Email already registered.")
+        return
+    get_table(USER_TABLE).put_item(Item={
+        "id": str(uuid.uuid4()),
+        "username": username,
+        "email": email,
+        "password_hash": generate_password_hash(password),
+        "role": "admin",
+        "is_active": True,
+        "created_at": now_iso(),
+    })
+    print(f"Admin {email} created.")
+
+
 if __name__ == "__main__":
     port = int(os.environ.get("FLASK_PORT", "5000"))
-    app.run(host="0.0.0.0", port=port, debug=True)
+    debug = os.environ.get("FLASK_DEBUG", "1") == "1"
+    app.run(host="0.0.0.0", port=port, debug=debug)
