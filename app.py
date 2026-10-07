@@ -15,7 +15,16 @@ from werkzeug.security import generate_password_hash, check_password_hash
 load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = os.environ.get("FLASK_SECRET_KEY", "dev-only-change-me")
+FLASK_DEBUG = os.environ.get("FLASK_DEBUG", "1") == "1"
+_secret = os.environ.get("FLASK_SECRET_KEY", "")
+if not _secret or _secret == "dev-only-change-me":
+    if FLASK_DEBUG:
+        app.secret_key = "dev-only-change-me"
+        print("Warning: using default dev secret key (FLASK_DEBUG=1).")
+    else:
+        raise RuntimeError("FLASK_SECRET_KEY must be set to a long random value when FLASK_DEBUG=0.")
+else:
+    app.secret_key = _secret
 
 # ---------- AWS Configuration ----------
 # For local development - use environment variables.
@@ -488,8 +497,14 @@ def sell_stock():
 
 
 # ---------- Routes: service pages + admin stock add ----------
+ALLOWED_SERVICE_PAGES = {"1", "2", "3", "4", "5"}
+
+
 @app.route("/service-details-<n>")
 def service_details(n):
+    if n not in ALLOWED_SERVICE_PAGES:
+        from flask import abort
+        abort(404)
     return render_template(f"service-details-{n}.html")
 
 
@@ -565,5 +580,4 @@ def create_admin():
 
 if __name__ == "__main__":
     port = int(os.environ.get("FLASK_PORT", "5000"))
-    debug = os.environ.get("FLASK_DEBUG", "1") == "1"
-    app.run(host="0.0.0.0", port=port, debug=debug)
+    app.run(host="0.0.0.0", port=port, debug=FLASK_DEBUG)
