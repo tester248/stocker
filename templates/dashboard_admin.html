@@ -1,1 +1,41 @@
-<!doctype html><html><head><meta charset="utf-8"><title>Admin Dashboard - Stocker</title><link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"></head><body><nav><strong>STOCKER · Admin</strong><div><a href="{{ url_for('buy_stock') }}">Buy</a><a href="{{ url_for('sell_stock') }}">Sell</a><a href="{{ url_for('logout') }}">Logout</a></div></nav><div class="container">{% with m=get_flashed_messages(with_categories=true) %}{% for c,msg in m %}<div class="flash {{c}}">{{msg}}</div>{% endfor %}{% endwith %}<div class="card"><h3>Add stock</h3><form method="post" action="{{ url_for('add_stock') }}"><input name="symbol" placeholder="SYMBOL" required><input name="name" placeholder="Company name" required><input name="price" placeholder="Price" required><input name="sector" placeholder="Sector"><input name="industry" placeholder="Industry"><button>Add</button></form></div><div class="card"><h3>Users ({{ (users or [])|length }})</h3><table><tr><th>Username</th><th>Email</th><th>Role</th><th>Active</th></tr>{% for u in users or [] %}<tr><td>{{ u.username }}</td><td>{{ u.email }}</td><td>{{ u.role }}</td><td>{{ u.is_active }}</td></tr>{% endfor %}</table></div><div class="card"><h3>Stocks</h3><table><tr><th>Symbol</th><th>Name</th><th>Price</th></tr>{% for s in stocks or [] %}<tr><td>{{ s.symbol }}</td><td>{{ s.name }}</td><td>{{ s.price }}</td></tr>{% endfor %}</table></div><div class="card"><h3>Transactions</h3><table><tr><th>Date</th><th>User</th><th>Stock</th><th>Side</th><th>Qty</th><th>Status</th></tr>{% for t in transactions or [] %}<tr><td>{{ t.transaction_date }}</td><td>{{ t.user_id }}</td><td>{{ t.stock_id }}</td><td>{{ t.action }}</td><td>{{ t.quantity }}</td><td>{{ t.status }}</td></tr>{% endfor %}</table></div></div></body></html>
+{% extends "base.html" %}
+{% block title %}Admin Dashboard - Stocker{% endblock %}
+{% block nav %}
+<a href="{{ url_for('dashboard_admin') }}">Admin</a>
+<a href="{{ url_for('portfolio') }}">My portfolio</a>
+<a href="{{ url_for('buy_stock') }}">Buy</a>
+<a href="{{ url_for('sell_stock') }}">Sell</a>
+<a href="{{ url_for('logout') }}">Logout</a>
+{% endblock %}
+{% block content %}
+<div class="card"><h3>Add stock</h3>
+<form method="post" action="{{ url_for('add_stock') }}">
+<label for="symbol">Symbol</label><input id="symbol" name="symbol" placeholder="SYMBOL" required>
+<label for="name">Company name</label><input id="name" name="name" placeholder="Company name" required>
+<label for="price">Price</label><input id="price" name="price" placeholder="Price" required>
+<label for="sector">Sector</label><input id="sector" name="sector" placeholder="Sector">
+<label for="industry">Industry</label><input id="industry" name="industry" placeholder="Industry">
+<button>Add</button>
+</form></div>
+<div class="card"><h3>Users ({{ (users or [])|length }})</h3>
+{% if users %}
+<div class="table-wrap"><table><tr><th>Username</th><th>Email</th><th>Role</th><th>Active</th></tr>
+{% for u in users %}<tr><td>{{ u.username }}</td><td>{{ u.email }}</td><td>{{ u.role }}</td><td>{{ u.is_active }}</td></tr>{% endfor %}
+</table></div>
+{% else %}<p class="empty">No users yet.</p>{% endif %}
+</div>
+<div class="card"><h3>Stocks</h3>
+{% if stocks %}
+<div class="table-wrap"><table><tr><th>Symbol</th><th>Name</th><th>Price</th></tr>
+{% for s in stocks %}<tr><td>{{ s.symbol }}</td><td>{{ s.name }}</td><td>${{ '%.2f'|format(s.price) }}</td></tr>{% endfor %}
+</table></div>
+{% else %}<p class="empty">No stocks yet. Add one above or run setup_dynamodb.py --seed-only.</p>{% endif %}
+</div>
+<div class="card"><h3>Transactions</h3>
+{% if transactions %}
+<div class="table-wrap"><table><tr><th>Date</th><th>User</th><th>Stock</th><th>Side</th><th>Qty</th><th>Status</th></tr>
+{% for t in transactions %}<tr><td>{{ t.transaction_date }}</td><td>{{ t.user_id }}</td><td>{{ t.stock_id }}</td><td>{{ t.action }}</td><td>{{ t.quantity }}</td><td>{{ t.status }}</td></tr>{% endfor %}
+</table></div>
+{% else %}<p class="empty">No transactions yet.</p>{% endif %}
+</div>
+{% endblock %}

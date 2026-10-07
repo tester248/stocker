@@ -1,1 +1,14 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Stocker</title><link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"></head><body><nav><strong>STOCKER</strong><div><a href="{{ url_for('index') }}">Home</a><a href="{{ url_for('login') }}">Login</a><a class="btn" href="{{ url_for('signup') }}">Sign up</a></div></nav><div class="container">{% with m=get_flashed_messages(with_categories=true) %}{% for c,msg in m %}<div class="flash {{c}}">{{msg}}</div>{% endfor %}{% endwith %}<div class="hero"><h1>Trade stocks in real time</h1><p>Paper-trading platform on Flask + DynamoDB + SNS. Secure auth, instant execution, portfolio tracking.</p><p><a class="btn" href="{{ url_for('signup') }}">Get started</a></p></div><div class="grid"><div class="card"><h3>Secure Auth</h3><p>Hashed passwords, sessions, role-based access (admin/trader).</p><a href="/service-details-1">Details</a></div><div class="card"><h3>Real-time Execution</h3><p>Low-latency buy/sell with accurate transaction records.</p><a href="/service-details-2">Details</a></div><div class="card"><h3>Portfolio Tracking</h3><p>Holdings, avg price, live P&amp;L dashboard.</p><a href="/service-details-3">Details</a></div></div></div></body></html>
+{% extends "base.html" %}
+{% block title %}Stocker - Paper Trading Platform{% endblock %}
+{% block content %}
+<div class="hero">
+<h1>Trade stocks in real time</h1>
+<p>Paper-trading platform on Flask + DynamoDB + SNS. Secure auth, instant execution, portfolio tracking.</p>
+<p><a class="btn" href="{{ url_for('signup') }}">Get started</a></p>
+</div>
+<div class="grid">
+<div class="card"><h3>Secure Auth</h3><p>Hashed passwords, sessions, role-based access (admin/trader).</p><p><a href="{{ url_for('service_details', n='1') }}">Details</a></p></div>
+<div class="card"><h3>Real-time Execution</h3><p>Low-latency buy/sell with accurate transaction records.</p><p><a href="{{ url_for('service_details', n='2') }}">Details</a></p></div>
+<div class="card"><h3>Portfolio Tracking</h3><p>Holdings, avg price, live P&amp;L dashboard.</p><p><a href="{{ url_for('service_details', n='3') }}">Details</a></p></div>
+</div>
+{% endblock %}

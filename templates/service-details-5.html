@@ -1,1 +1,7 @@
-<!doctype html><html><head><meta charset='utf-8'><title>Service 5 - Stocker</title><link rel='stylesheet' href='/static/css/style.css'></head><body><div class='container'><h2>Service detail 5</h2><p>Placeholder.</p><p><a href='/'>Back home</a></p></div></body></html>
+{% extends "base.html" %}
+{% block title %}Cloud Architecture - Stocker{% endblock %}
+{% block content %}
+<h2>Cloud-native on AWS</h2>
+<div class="card"><p>Flask runs on <strong>EC2</strong> under an IAM role with least-privilege access (DynamoDB on <code>stocker_*</code> + SNS publish only). Data lives in serverless <strong>DynamoDB</strong> with on-demand scaling, served to users through <strong>gunicorn + systemd</strong>.</p></div>
+<p><a href="{{ url_for('index') }}">Back home</a></p>
+{% endblock %}

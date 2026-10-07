@@ -1,1 +1,36 @@
-<!doctype html><html><head><meta charset="utf-8"><title>Trader Dashboard - Stocker</title><link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"></head><body><nav><strong>STOCKER · Trader</strong><div><a href="{{ url_for('buy_stock') }}">Buy</a><a href="{{ url_for('sell_stock') }}">Sell</a><a href="{{ url_for('logout') }}">Logout ({{ user.username if user else '' }})</a></div></nav><div class="container">{% with m=get_flashed_messages(with_categories=true) %}{% for c,msg in m %}<div class="flash {{c}}">{{msg}}</div>{% endfor %}{% endwith %}<div class="card"><h3>Portfolio value: ${{ total_value or 0 }}</h3></div><div class="card"><h3>Market</h3><table><tr><th>Symbol</th><th>Name</th><th>Price</th><th>Sector</th></tr>{% for s in stocks or [] %}<tr><td>{{ s.symbol }}</td><td>{{ s.name }}</td><td>{{ s.price }}</td><td>{{ s.sector }}</td></tr>{% endfor %}</table></div><div class="card"><h3>Holdings</h3><table><tr><th>Symbol</th><th>Qty</th><th>Avg</th><th>Live</th><th>Value</th><th>P&amp;L</th></tr>{% for h in holdings or [] %}{% if h.symbol %}<tr><td>{{ h.symbol }}</td><td>{{ h.quantity }}</td><td>{{ h.average_price }}</td><td>{{ h.live_price }}</td><td>{{ h.market_value }}</td><td>{{ h.pnl }}</td></tr>{% endif %}{% endfor %}</table></div><div class="card"><h3>Recent transactions</h3><table><tr><th>Date</th><th>Stock</th><th>Side</th><th>Qty</th><th>Price</th><th>Status</th></tr>{% for t in transactions or [] %}<tr><td>{{ t.transaction_date }}</td><td>{{ t.stock_id }}</td><td>{{ t.action }}</td><td>{{ t.quantity }}</td><td>{{ t.price }}</td><td>{{ t.status }}</td></tr>{% endfor %}</table></div></div></body></html>
+{% extends "base.html" %}
+{% block title %}Trader Dashboard - Stocker{% endblock %}
+{% block nav %}
+{% if session.get('role') == 'admin' %}
+<a href="{{ url_for('dashboard_admin') }}">Admin</a>
+{% else %}
+<a href="{{ url_for('dashboard_trader') }}">Dashboard</a>
+{% endif %}
+<a href="{{ url_for('buy_stock') }}">Buy</a>
+<a href="{{ url_for('sell_stock') }}">Sell</a>
+<a href="{{ url_for('logout') }}">Logout ({{ user.username if user else '' }})</a>
+{% endblock %}
+{% block content %}
+<div class="card"><h3>Portfolio value: ${{ '%.2f'|format(total_value or 0) }}</h3></div>
+<div class="card"><h3>Market</h3>
+{% if stocks %}
+<div class="table-wrap"><table><tr><th>Symbol</th><th>Name</th><th>Price</th><th>Sector</th></tr>
+{% for s in stocks %}<tr><td>{{ s.symbol }}</td><td>{{ s.name }}</td><td>${{ '%.2f'|format(s.price) }}</td><td>{{ s.sector }}</td></tr>{% endfor %}
+</table></div>
+{% else %}<p class="empty">No stocks listed yet. An admin can add some from the admin dashboard.</p>{% endif %}
+</div>
+<div class="card"><h3>Holdings</h3>
+{% if holdings %}
+<div class="table-wrap"><table><tr><th>Symbol</th><th>Qty</th><th>Avg</th><th>Live</th><th>Value</th><th>P&amp;L</th></tr>
+{% for h in holdings %}{% if h.symbol %}<tr><td>{{ h.symbol }}</td><td>{{ h.quantity }}</td><td>${{ '%.2f'|format(h.average_price) }}</td><td>${{ '%.2f'|format(h.live_price) }}</td><td>${{ '%.2f'|format(h.market_value) }}</td><td class="{{ 'pos' if h.pnl >= 0 else 'neg' }}">{{ '$%.2f'|format(h.pnl) }}</td></tr>{% endif %}{% endfor %}
+</table></div>
+{% else %}<p class="empty">No holdings yet. <a href="{{ url_for('buy_stock') }}">Buy your first stock</a>.</p>{% endif %}
+</div>
+<div class="card"><h3>Recent transactions</h3>
+{% if transactions %}
+<div class="table-wrap"><table><tr><th>Date</th><th>Stock</th><th>Side</th><th>Qty</th><th>Price</th><th>Status</th></tr>
+{% for t in transactions %}<tr><td>{{ t.transaction_date }}</td><td>{{ t.stock_id }}</td><td>{{ t.action }}</td><td>{{ t.quantity }}</td><td>${{ '%.2f'|format(t.price) }}</td><td>{{ t.status }}</td></tr>{% endfor %}
+</table></div>
+{% else %}<p class="empty">No transactions yet.</p>{% endif %}
+</div>
+{% endblock %}

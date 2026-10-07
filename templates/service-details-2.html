@@ -1,1 +1,7 @@
-<!doctype html><html><head><meta charset='utf-8'><title>Service 2 - Stocker</title><link rel='stylesheet' href='/static/css/style.css'></head><body><div class='container'><h2>Service detail 2</h2><p>Placeholder.</p><p><a href='/'>Back home</a></p></div></body></html>
+{% extends "base.html" %}
+{% block title %}Trade Execution - Stocker{% endblock %}
+{% block content %}
+<h2>Real-time trade execution</h2>
+<div class="card"><p>Buy and sell orders execute immediately against the listed price. Every order writes a <strong>transaction record</strong> (side, quantity, price, status, timestamp) and updates the portfolio atomically. Oversells are rejected with a <strong>FAILED</strong> transaction so holdings can never go negative.</p></div>
+<p><a href="{{ url_for('buy_stock') }}">Try buying</a> · <a href="{{ url_for('index') }}">Back home</a></p>
+{% endblock %}

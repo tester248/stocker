@@ -1,1 +1,29 @@
-<!doctype html><html><head><meta charset="utf-8"><title>Buy - Stocker</title><link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"></head><body><div class="container"><h2>Buy stock</h2>{% with m=get_flashed_messages(with_categories=true) %}{% for c,msg in m %}<div class="flash {{c}}">{{msg}}</div>{% endfor %}{% endwith %}<form method="post"><input name="symbol" placeholder="SYMBOL e.g. INFY" required><input name="quantity" type="number" min="1" value="1" required><button>Buy</button></form><div class="card"><h3>Available</h3><table><tr><th>Symbol</th><th>Price</th></tr>{% for s in stocks or [] %}<tr><td>{{ s.symbol }}</td><td>{{ s.price }}</td></tr>{% endfor %}</table></div></div></body></html>
+{% extends "base.html" %}
+{% block title %}Buy - Stocker{% endblock %}
+{% block nav %}
+{% if session.get('role') == 'admin' %}
+<a href="{{ url_for('dashboard_admin') }}">Admin</a>
+{% else %}
+<a href="{{ url_for('dashboard_trader') }}">Dashboard</a>
+{% endif %}
+<a href="{{ url_for('buy_stock') }}">Buy</a>
+<a href="{{ url_for('sell_stock') }}">Sell</a>
+<a href="{{ url_for('logout') }}">Logout</a>
+{% endblock %}
+{% block content %}
+<h2>Buy stock</h2>
+<form method="post">
+<label for="symbol">Symbol</label>
+<input id="symbol" name="symbol" placeholder="SYMBOL e.g. INFY" required>
+<label for="quantity">Quantity</label>
+<input id="quantity" name="quantity" type="number" min="1" value="1" required>
+<button>Buy</button>
+</form>
+<div class="card"><h3>Available</h3>
+{% if stocks %}
+<div class="table-wrap"><table><tr><th>Symbol</th><th>Price</th></tr>
+{% for s in stocks %}<tr><td>{{ s.symbol }}</td><td>${{ '%.2f'|format(s.price) }}</td></tr>{% endfor %}
+</table></div>
+{% else %}<p class="empty">No stocks available right now.</p>{% endif %}
+</div>
+{% endblock %}

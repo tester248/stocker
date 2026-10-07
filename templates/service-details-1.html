@@ -1,1 +1,7 @@
-<!doctype html><html><head><meta charset='utf-8'><title>Service 1 - Stocker</title><link rel='stylesheet' href='/static/css/style.css'></head><body><div class='container'><h2>Service detail 1</h2><p>Placeholder.</p><p><a href='/'>Back home</a></p></div></body></html>
+{% extends "base.html" %}
+{% block title %}Secure Authentication - Stocker{% endblock %}
+{% block content %}
+<h2>Secure user authentication</h2>
+<div class="card"><p>Passwords are stored as salted hashes (Werkzeug PBKDF2), never in plaintext. Sessions are server-side signed cookies, and role-based access control separates <strong>admin</strong> users (user/stock management) from <strong>traders</strong> (trading and portfolio). Inactive accounts are blocked at login.</p></div>
+<p><a href="{{ url_for('signup') }}">Create an account</a> · <a href="{{ url_for('index') }}">Back home</a></p>
+{% endblock %}

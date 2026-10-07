@@ -1,1 +1,7 @@
-<!doctype html><html><head><meta charset='utf-8'><title>Service 3 - Stocker</title><link rel='stylesheet' href='/static/css/style.css'></head><body><div class='container'><h2>Service detail 3</h2><p>Placeholder.</p><p><a href='/'>Back home</a></p></div></body></html>
+{% extends "base.html" %}
+{% block title %}Portfolio Tracking - Stocker{% endblock %}
+{% block content %}
+<h2>Portfolio tracking</h2>
+<div class="card"><p>The dashboard shows every holding with quantity, <strong>weighted average buy price</strong>, live price, market value and profit/loss — plus total portfolio value and full transaction history, newest first.</p></div>
+<p><a href="{{ url_for('portfolio') }}">View portfolio</a> · <a href="{{ url_for('index') }}">Back home</a></p>
+{% endblock %}
