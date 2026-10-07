@@ -1,28 +1,22 @@
-{% extends "base.html" %}
+{% extends "app_shell.html" %}
 {% block title %}Sell - Stocker{% endblock %}
-{% block nav %}
-{% if session.get('role') == 'admin' %}
-<a href="{{ url_for('dashboard_admin') }}">Admin</a>
-{% else %}
-<a href="{{ url_for('dashboard_trader') }}">Dashboard</a>
-{% endif %}
-<a href="{{ url_for('buy_stock') }}">Buy</a>
-<a href="{{ url_for('sell_stock') }}">Sell</a>
-<a href="{{ url_for('logout') }}">Logout</a>
-{% endblock %}
-{% block content %}
-<h2>Sell stock</h2>
-<form method="post">
-<label for="symbol">Symbol</label>
-<input id="symbol" name="symbol" placeholder="SYMBOL e.g. INFY" required>
-<label for="quantity">Quantity</label>
-<input id="quantity" name="quantity" type="number" min="1" value="1" required>
-<button>Sell</button>
+{% block page %}
+<div class="max-w-xl mx-auto glass p-6">
+<h2 class="text-2xl font-bold">Sell stock</h2>
+<p class="text-sm text-slate-400 mt-1">Sells settle instantly and update your portfolio.</p>
+<form method="post" class="mt-4">
+<label class="flabel" for="symbol">Symbol</label>
+<input class="field" id="symbol" name="symbol" placeholder="SYMBOL e.g. INFY" required>
+<label class="flabel" for="quantity">Quantity</label>
+<input class="field" id="quantity" name="quantity" type="number" min="1" value="1" required>
+<button class="btn-primary w-full mt-2">Sell</button>
 </form>
+</div>
 {% if holdings %}
-<div class="card"><h3>Your holdings</h3>
-<div class="table-wrap"><table><tr><th>Symbol</th><th>Qty</th></tr>
-{% for h in holdings %}<tr><td>{{ h.symbol }}</td><td>{{ h.quantity }}</td></tr>{% endfor %}
+<div class="max-w-xl mx-auto glass p-5 mt-4">
+<h3 class="card-title">Your holdings</h3>
+<div class="table-wrap"><table class="tbl"><tr><th>Symbol</th><th>Qty</th></tr>
+{% for h in holdings %}<tr><td class="font-mono font-semibold">{{ h.symbol }}</td><td class="font-mono">{{ h.quantity }}</td></tr>{% endfor %}
 </table></div></div>
-{% else %}<p class="empty">You don't hold any stocks yet.</p>{% endif %}
+{% else %}<p class="empty text-center mt-4">You don't hold any stocks yet.</p>{% endif %}
 {% endblock %}

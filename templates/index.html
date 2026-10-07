@@ -1,14 +1,15 @@
 {% extends "base.html" %}
 {% block title %}Stocker - Paper Trading Platform{% endblock %}
 {% block content %}
-<div class="hero">
-<h1>Trade stocks in real time</h1>
-<p>Paper-trading platform on Flask + DynamoDB + SNS. Secure auth, instant execution, portfolio tracking.</p>
-<p><a class="btn" href="{{ url_for('signup') }}">Get started</a></p>
+<div class="text-center py-14">
+<div class="pill border-emerald-400/30 bg-emerald-500/10 text-emerald-300 border inline-block mb-5">Flask · DynamoDB · SNS · EC2</div>
+<h1 class="text-5xl md:text-6xl font-extrabold tracking-tight">Trade stocks in <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 to-teal-400">real time</span></h1>
+<p class="text-slate-400 mt-4 max-w-xl mx-auto">Paper-trading platform with secure auth, instant execution, and portfolio tracking — on a cloud-native AWS stack.</p>
+<p class="mt-7"><a class="btn-primary text-base px-7 py-3" href="{{ url_for('signup') }}">Get started</a></p>
 </div>
-<div class="grid">
-<div class="card"><h3>Secure Auth</h3><p>Hashed passwords, sessions, role-based access (admin/trader).</p><p><a href="{{ url_for('service_details', n='1') }}">Details</a></p></div>
-<div class="card"><h3>Real-time Execution</h3><p>Low-latency buy/sell with accurate transaction records.</p><p><a href="{{ url_for('service_details', n='2') }}">Details</a></p></div>
-<div class="card"><h3>Portfolio Tracking</h3><p>Holdings, avg price, live P&amp;L dashboard.</p><p><a href="{{ url_for('service_details', n='3') }}">Details</a></p></div>
+<div class="grid md:grid-cols-3 gap-4">
+<div class="glass p-6"><h3 class="card-title">Secure Auth</h3><p class="text-sm text-slate-400">Hashed passwords, sessions, role-based access (admin/trader).</p><p class="mt-3"><a class="text-accent text-sm underline" href="{{ url_for('service_details', n='1') }}">Details</a></p></div>
+<div class="glass p-6"><h3 class="card-title">Real-time Execution</h3><p class="text-sm text-slate-400">Low-latency buy/sell with accurate transaction records.</p><p class="mt-3"><a class="text-accent text-sm underline" href="{{ url_for('service_details', n='2') }}">Details</a></p></div>
+<div class="glass p-6"><h3 class="card-title">Portfolio Tracking</h3><p class="text-sm text-slate-400">Holdings, avg price, live P&amp;L dashboard.</p><p class="mt-3"><a class="text-accent text-sm underline" href="{{ url_for('service_details', n='3') }}">Details</a></p></div>
 </div>
 {% endblock %}

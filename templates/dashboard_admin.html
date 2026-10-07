@@ -1,41 +1,47 @@
-{% extends "base.html" %}
+{% extends "app_shell.html" %}
 {% block title %}Admin Dashboard - Stocker{% endblock %}
-{% block nav %}
-<a href="{{ url_for('dashboard_admin') }}">Admin</a>
-<a href="{{ url_for('portfolio') }}">My portfolio</a>
-<a href="{{ url_for('buy_stock') }}">Buy</a>
-<a href="{{ url_for('sell_stock') }}">Sell</a>
-<a href="{{ url_for('logout') }}">Logout</a>
-{% endblock %}
-{% block content %}
-<div class="card"><h3>Add stock</h3>
+{% block page %}
+<div class="grid grid-cols-12 gap-4">
+<div class="glass col-span-6 lg:col-span-3 p-5"><div class="stat-label">Users</div><div class="stat-num">{{ (users or [])|length }}</div></div>
+<div class="glass col-span-6 lg:col-span-3 p-5"><div class="stat-label">Stocks</div><div class="stat-num">{{ (stocks or [])|length }}</div></div>
+<div class="glass col-span-6 lg:col-span-3 p-5"><div class="stat-label">Transactions</div><div class="stat-num">{{ (transactions or [])|length }}</div></div>
+<div class="glass col-span-6 lg:col-span-3 p-5"><div class="stat-label">Role</div><div class="stat-num text-accent">Admin</div></div>
+<div class="glass col-span-12 lg:col-span-4 p-5">
+<h3 class="card-title">Add stock</h3>
 <form method="post" action="{{ url_for('add_stock') }}">
-<label for="symbol">Symbol</label><input id="symbol" name="symbol" placeholder="SYMBOL" required>
-<label for="name">Company name</label><input id="name" name="name" placeholder="Company name" required>
-<label for="price">Price</label><input id="price" name="price" placeholder="Price" required>
-<label for="sector">Sector</label><input id="sector" name="sector" placeholder="Sector">
-<label for="industry">Industry</label><input id="industry" name="industry" placeholder="Industry">
-<button>Add</button>
-</form></div>
-<div class="card"><h3>Users ({{ (users or [])|length }})</h3>
+<label class="flabel" for="symbol">Symbol</label><input class="field" id="symbol" name="symbol" placeholder="SYMBOL" required>
+<label class="flabel" for="name">Company name</label><input class="field" id="name" name="name" placeholder="Company name" required>
+<label class="flabel" for="price">Price</label><input class="field" id="price" name="price" placeholder="Price" required>
+<label class="flabel" for="sector">Sector</label><input class="field" id="sector" name="sector" placeholder="Sector">
+<label class="flabel" for="industry">Industry</label><input class="field" id="industry" name="industry" placeholder="Industry">
+<button class="btn-primary w-full mt-2">Add stock</button>
+</form>
+</div>
+<div class="col-span-12 lg:col-span-8 grid gap-4">
+<div class="glass p-5">
+<h3 class="card-title">Users</h3>
 {% if users %}
-<div class="table-wrap"><table><tr><th>Username</th><th>Email</th><th>Role</th><th>Active</th></tr>
-{% for u in users %}<tr><td>{{ u.username }}</td><td>{{ u.email }}</td><td>{{ u.role }}</td><td>{{ u.is_active }}</td></tr>{% endfor %}
+<div class="table-wrap"><table class="tbl"><tr><th>Username</th><th>Email</th><th>Role</th><th>Active</th></tr>
+{% for u in users %}<tr><td>{{ u.username }}</td><td class="text-slate-400">{{ u.email }}</td><td>{{ u.role }}</td><td>{{ u.is_active }}</td></tr>{% endfor %}
 </table></div>
 {% else %}<p class="empty">No users yet.</p>{% endif %}
 </div>
-<div class="card"><h3>Stocks</h3>
+<div class="glass p-5">
+<h3 class="card-title">Stocks</h3>
 {% if stocks %}
-<div class="table-wrap"><table><tr><th>Symbol</th><th>Name</th><th>Price</th></tr>
-{% for s in stocks %}<tr><td>{{ s.symbol }}</td><td>{{ s.name }}</td><td>${{ '%.2f'|format(s.price) }}</td></tr>{% endfor %}
+<div class="table-wrap"><table class="tbl"><tr><th>Symbol</th><th>Name</th><th>Price</th></tr>
+{% for s in stocks %}<tr><td class="font-mono font-semibold">{{ s.symbol }}</td><td>{{ s.name }}</td><td class="font-mono">${{ '%.2f'|format(s.price) }}</td></tr>{% endfor %}
 </table></div>
-{% else %}<p class="empty">No stocks yet. Add one above or run setup_dynamodb.py --seed-only.</p>{% endif %}
+{% else %}<p class="empty">No stocks yet. Add one here or run setup_dynamodb.py --seed-only.</p>{% endif %}
 </div>
-<div class="card"><h3>Transactions</h3>
+<div class="glass p-5">
+<h3 class="card-title">Transactions</h3>
 {% if transactions %}
-<div class="table-wrap"><table><tr><th>Date</th><th>User</th><th>Stock</th><th>Side</th><th>Qty</th><th>Status</th></tr>
-{% for t in transactions %}<tr><td>{{ t.transaction_date }}</td><td>{{ t.user_id }}</td><td>{{ t.stock_id }}</td><td>{{ t.action }}</td><td>{{ t.quantity }}</td><td>{{ t.status }}</td></tr>{% endfor %}
+<div class="table-wrap"><table class="tbl"><tr><th>Date</th><th>User</th><th>Stock</th><th>Side</th><th>Qty</th><th>Status</th></tr>
+{% for t in transactions %}<tr><td class="text-xs text-slate-400">{{ t.transaction_date }}</td><td class="text-xs">{{ t.user_id }}</td><td class="font-mono">{{ t.stock_id }}</td><td>{{ t.action }}</td><td class="font-mono">{{ t.quantity }}</td><td class="text-xs">{{ t.status }}</td></tr>{% endfor %}
 </table></div>
 {% else %}<p class="empty">No transactions yet.</p>{% endif %}
+</div>
+</div>
 </div>
 {% endblock %}

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block shell %}
+<div class="min-h-screen md:flex">
+<aside class="hidden md:flex md:w-60 shrink-0 flex-col gap-1 border-r border-white/10 bg-panel/70 backdrop-blur-xl p-4">
+<a class="font-extrabold tracking-widest text-accent text-lg px-2 py-3" href="{{ url_for('index') }}">STOCKER</a>
+{% if session.get('role') == 'admin' %}
+<a class="navlink" href="{{ url_for('dashboard_admin') }}">Admin</a>
+{% else %}
+<a class="navlink" href="{{ url_for('dashboard_trader') }}">Dashboard</a>
+{% endif %}
+<a class="navlink" href="{{ url_for('buy_stock') }}">Buy</a>
+<a class="navlink" href="{{ url_for('sell_stock') }}">Sell</a>
+<a class="navlink" href="{{ url_for('portfolio') }}">Portfolio</a>
+<div class="mt-auto pt-4 border-t border-white/10">
+<div class="px-2 text-xs text-slate-400">{{ session.get('username', '') }} · {{ session.get('role', '') }}</div>
+<a class="navlink" href="{{ url_for('logout') }}">Logout</a>
+</div>
+</aside>
+<div class="flex-1 min-w-0">
+<div class="md:hidden border-b border-white/10 bg-panel/70 backdrop-blur-xl px-4 py-3 flex items-center gap-4 text-sm overflow-x-auto">
+<a class="font-extrabold tracking-widest text-accent" href="{{ url_for('index') }}">STOCKER</a>
+{% if session.get('role') == 'admin' %}
+<a class="text-slate-300" href="{{ url_for('dashboard_admin') }}">Admin</a>
+{% else %}
+<a class="text-slate-300" href="{{ url_for('dashboard_trader') }}">Dashboard</a>
+{% endif %}
+<a class="text-slate-300" href="{{ url_for('buy_stock') }}">Buy</a>
+<a class="text-slate-300" href="{{ url_for('sell_stock') }}">Sell</a>
+<a class="text-slate-300" href="{{ url_for('logout') }}">Logout</a>
+</div>
+<div class="max-w-6xl mx-auto px-4 py-6">
+{% with m=get_flashed_messages(with_categories=true) %}
+{% for c,msg in m %}
+{% if c == 'success' %}<div class="flash mb-3 rounded-xl px-4 py-2.5 text-sm bg-emerald-500/15 border border-emerald-400/30 text-emerald-200">{{msg}}</div>
+{% elif c == 'danger' %}<div class="flash mb-3 rounded-xl px-4 py-2.5 text-sm bg-red-500/15 border border-red-400/30 text-red-200">{{msg}}</div>
+{% elif c == 'warning' %}<div class="flash mb-3 rounded-xl px-4 py-2.5 text-sm bg-amber-500/15 border border-amber-400/30 text-amber-200">{{msg}}</div>
+{% else %}<div class="flash mb-3 rounded-xl px-4 py-2.5 text-sm bg-sky-500/15 border border-sky-400/30 text-sky-200">{{msg}}</div>
+{% endif %}
+{% endfor %}
+{% endwith %}
+{% block page %}{% endblock %}
+</div>
+</div>
+</div>
+{% endblock %}

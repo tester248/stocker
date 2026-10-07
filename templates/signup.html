@@ -1,17 +1,19 @@
 {% extends "base.html" %}
 {% block title %}Sign up - Stocker{% endblock %}
 {% block content %}
-<h2>Create account</h2>
-<form method="post">
-<label for="username">Username</label>
-<input id="username" name="username" placeholder="Username" required>
-<label for="email">Email</label>
-<input id="email" name="email" type="email" placeholder="Email" required>
-<label for="password">Password</label>
-<input id="password" name="password" type="password" placeholder="Password (min 6 chars)" required>
-<label for="role">Role</label>
-<select id="role" name="role"><option value="trader">Trader</option><option value="admin">Admin</option></select>
-<button type="submit">Sign up</button>
+<div class="max-w-md mx-auto glass p-6 mt-6">
+<h2 class="text-2xl font-bold">Create account</h2>
+<form method="post" class="mt-4">
+<label class="flabel" for="username">Username</label>
+<input class="field" id="username" name="username" placeholder="Username" required>
+<label class="flabel" for="email">Email</label>
+<input class="field" id="email" name="email" type="email" placeholder="Email" required>
+<label class="flabel" for="password">Password</label>
+<input class="field" id="password" name="password" type="password" placeholder="Password (min 6 chars)" required>
+<label class="flabel" for="role">Role</label>
+<select class="field" id="role" name="role"><option value="trader">Trader</option><option value="admin">Admin</option></select>
+<button class="btn-primary w-full mt-2" type="submit">Sign up</button>
 </form>
-<p><a href="{{ url_for('login') }}">Already have an account? Log in</a></p>
+<p class="text-sm text-slate-400 mt-4"><a class="text-accent underline" href="{{ url_for('login') }}">Already have an account? Log in</a></p>
+</div>
 {% endblock %}

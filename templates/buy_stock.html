@@ -1,29 +1,23 @@
-{% extends "base.html" %}
+{% extends "app_shell.html" %}
 {% block title %}Buy - Stocker{% endblock %}
-{% block nav %}
-{% if session.get('role') == 'admin' %}
-<a href="{{ url_for('dashboard_admin') }}">Admin</a>
-{% else %}
-<a href="{{ url_for('dashboard_trader') }}">Dashboard</a>
-{% endif %}
-<a href="{{ url_for('buy_stock') }}">Buy</a>
-<a href="{{ url_for('sell_stock') }}">Sell</a>
-<a href="{{ url_for('logout') }}">Logout</a>
-{% endblock %}
-{% block content %}
-<h2>Buy stock</h2>
-<form method="post">
-<label for="symbol">Symbol</label>
-<input id="symbol" name="symbol" placeholder="SYMBOL e.g. INFY" required>
-<label for="quantity">Quantity</label>
-<input id="quantity" name="quantity" type="number" min="1" value="1" required>
-<button>Buy</button>
+{% block page %}
+<div class="max-w-xl mx-auto glass p-6">
+<h2 class="text-2xl font-bold">Buy stock</h2>
+<p class="text-sm text-slate-400 mt-1">Orders execute instantly at the listed price.</p>
+<form method="post" class="mt-4">
+<label class="flabel" for="symbol">Symbol</label>
+<input class="field" id="symbol" name="symbol" placeholder="SYMBOL e.g. INFY" required>
+<label class="flabel" for="quantity">Quantity</label>
+<input class="field" id="quantity" name="quantity" type="number" min="1" value="1" required>
+<button class="btn-primary w-full mt-2">Buy</button>
 </form>
-<div class="card"><h3>Available</h3>
+</div>
+<div class="max-w-xl mx-auto glass p-5 mt-4">
+<h3 class="card-title">Available</h3>
 {% if stocks %}
-<div class="table-wrap"><table><tr><th>Symbol</th><th>Price</th></tr>
-{% for s in stocks %}<tr><td>{{ s.symbol }}</td><td>${{ '%.2f'|format(s.price) }}</td></tr>{% endfor %}
-</table></div>
+<ul class="divide-y divide-white/5">
+{% for s in stocks %}<li class="py-2 flex items-center justify-between"><span class="font-mono font-semibold">{{ s.symbol }}</span><span class="font-mono text-sm">${{ '%.2f'|format(s.price) }}</span></li>{% endfor %}
+</ul>
 {% else %}<p class="empty">No stocks available right now.</p>{% endif %}
 </div>
 {% endblock %}

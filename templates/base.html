@@ -5,25 +5,61 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{% block title %}Stocker{% endblock %}</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%2322c55e'/%3E%3Ctext x='8' y='12' font-size='10' text-anchor='middle' fill='%23062a0f' font-family='Arial' font-weight='bold'%3ES%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        ink: '#05070d',
+        panel: '#0b1120',
+        accent: '#22c55e',
+        danger: '#f87171',
+      },
+      fontFamily: {
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        mono: ['JetBrains Mono', 'monospace'],
+      },
+    },
+  },
+}
+</script>
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-<body>
-<nav>
-<a class="brand" href="{{ url_for('index') }}">STOCKER</a>
-<div>
+<body class="bg-ink text-slate-100 font-sans min-h-screen antialiased">
+<div class="fixed inset-0 -z-10 pointer-events-none">
+<div class="absolute -top-40 left-1/4 w-[36rem] h-[36rem] rounded-full opacity-20" style="background:radial-gradient(circle,#22c55e 0%,transparent 65%)"></div>
+<div class="absolute bottom-0 right-0 w-[28rem] h-[28rem] rounded-full opacity-10" style="background:radial-gradient(circle,#38bdf8 0%,transparent 65%)"></div>
+</div>
+{% block shell %}
+<nav class="border-b border-white/10 bg-panel/70 backdrop-blur-xl">
+<div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+<a class="font-extrabold tracking-widest text-accent" href="{{ url_for('index') }}">STOCKER</a>
+<div class="flex items-center gap-4 text-sm">
 {% block nav %}
-<a href="{{ url_for('index') }}">Home</a>
-<a href="{{ url_for('login') }}">Login</a>
-<a class="btn" href="{{ url_for('signup') }}">Sign up</a>
+<a class="text-slate-300 hover:text-white" href="{{ url_for('index') }}">Home</a>
+<a class="text-slate-300 hover:text-white" href="{{ url_for('login') }}">Login</a>
+<a class="bg-accent text-emerald-950 font-bold px-4 py-1.5 rounded-lg" href="{{ url_for('signup') }}">Sign up</a>
 {% endblock %}
 </div>
+</div>
 </nav>
-<div class="container">
+<div class="max-w-6xl mx-auto px-4 py-6">
 {% with m=get_flashed_messages(with_categories=true) %}
-{% for c,msg in m %}<div class="flash {{c}}">{{msg}}</div>{% endfor %}
+{% for c,msg in m %}
+{% if c == 'success' %}<div class="flash mb-3 rounded-xl px-4 py-2.5 text-sm bg-emerald-500/15 border border-emerald-400/30 text-emerald-200">{{msg}}</div>
+{% elif c == 'danger' %}<div class="flash mb-3 rounded-xl px-4 py-2.5 text-sm bg-red-500/15 border border-red-400/30 text-red-200">{{msg}}</div>
+{% elif c == 'warning' %}<div class="flash mb-3 rounded-xl px-4 py-2.5 text-sm bg-amber-500/15 border border-amber-400/30 text-amber-200">{{msg}}</div>
+{% else %}<div class="flash mb-3 rounded-xl px-4 py-2.5 text-sm bg-sky-500/15 border border-sky-400/30 text-sky-200">{{msg}}</div>
+{% endif %}
+{% endfor %}
 {% endwith %}
 {% block content %}{% endblock %}
 </div>
+{% endblock %}
 <script src="{{ url_for('static', filename='js/app.js') }}"></script>
 </body>
 </html>
