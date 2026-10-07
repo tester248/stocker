@@ -60,8 +60,8 @@ class DecimalEncoder(json.JSONEncoder):
 
 
 def clean_dynamo_response(response):
-    """Convert DynamoDB response to plain Python dict."""
-    if not response:
+    """Convert DynamoDB response to plain Python dict (preserves empty lists)."""
+    if response is None:
         return None
     return json.loads(json.dumps(response, cls=DecimalEncoder))
 
