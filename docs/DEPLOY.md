@@ -9,6 +9,15 @@
 2. Attach inline policy from `deploy/iam-stocker-ec2-policy.json` (scoped to `stocker_*` tables + 2 SNS topics, least privilege).
 3. You will attach this role at instance launch (Epic 5).
 
+### Troven Labs variation (validated lab)
+The lab checker (task 2) expects a role literally named **`StudentUser`** with
+**only** the AWS managed policies **`AmazonEC2FullAccess`** +
+**`AmazonDynamoDBFullAccess`** — no extra/SNS policies, or the "only" check may
+fail. Region must be **N Virginia (us-east-1)**. The app degrades gracefully
+without SNS publish rights (missed notifications are logged, trading still works).
+`deploy/iam-stocker-ec2-policy.json` / `iam-trust-policy.json` remain the
+best-practice reference for non-lab deployments.
+
 ## Epic 4: SNS topics
 ```bash
 aws sns create-topic --name stocker-user-events --region us-east-1
