@@ -11,10 +11,11 @@
 
 ### Troven Labs variation (validated lab)
 The lab checker (task 2) expects a role literally named **`StudentUser`** with
-**only** the AWS managed policies **`AmazonEC2FullAccess`** +
-**`AmazonDynamoDBFullAccess`** — no extra/SNS policies, or the "only" check may
-fail. Region must be **N Virginia (us-east-1)**. The app degrades gracefully
-without SNS publish rights (missed notifications are logged, trading still works).
+the AWS managed policies **`AmazonEC2FullAccess`** + **`AmazonDynamoDBFullAccess`**.
+Validate task 2 first with only those two attached. Afterwards, attach
+**`AmazonSNSFullAccess`** as well (required by Epic 4 — without `sns:Publish`,
+event mails silently never send; the app logs and continues trading).
+Region must be **N Virginia (us-east-1)**.
 `deploy/iam-stocker-ec2-policy.json` / `iam-trust-policy.json` remain the
 best-practice reference for non-lab deployments.
 
