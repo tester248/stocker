@@ -38,6 +38,13 @@ Confirm both email subscriptions. Put the ARNs in `.env` as `SNS_USER_TOPIC_ARN`
 - Security group inbound: `22/tcp` from your IP only; `5000/tcp` (or `80`) from `0.0.0.0/0`. Outbound: all.
 - Key pair for SSH.
 
+### Troven Labs variation (task 1)
+- AMI: **Amazon Linux 2** (matches `deploy/user-data.sh`, which uses `yum`; Ubuntu would need `apt` edits), type **`t2.micro`**, region N Virginia.
+- Create + download a key pair at launch (required by the wizard even if you connect via browser).
+- Security group: allow `22/tcp` and custom TCP **`5000`** (Flask) from `0.0.0.0/0`.
+- Attach the role **after** launch: instance → **Actions → Security → Modify IAM role** → choose **`StudentUser`** → Update.
+- Connect via **EC2 Instance Connect** (browser terminal): select instance → **Connect → EC2 Instance Connect → Connect**.
+
 ## Epic 6: Deploy
 ```bash
 ssh -i key.pem ec2-user@<EC2_PUBLIC_IP>
@@ -50,3 +57,28 @@ sudo systemctl enable --now stocker
 curl http://localhost:5000/health
 ```
 `.env` on EC2 contains only `FLASK_SECRET_KEY`, `AWS_REGION`, `SNS_*_ARN`, `FLASK_PORT`, `FLASK_DEBUG=0`. Never put AWS keys on EC2.
+
+### Troven Labs variation (task 5, via EC2 Instance Connect browser terminal)
+Tables already exist from task 3 — the script will skip creation and only seed stocks.
+```bash
+sudo yum update -y
+sudo yum install -y python3 python3-pip git
+# confirm the StudentUser role is attached (empty output = go back to Epic 5 step):
+curl -s http://169.254.169.254/latest/meta-data/iam/info
+git clone https://github.com/tester248/stocker.git
+cd stocker
+pip3 install -r requirements.txt
+python3 -c "import secrets; print(secrets.token_hex(32))"  # generate secret, paste below
+cat > .env <<'EOF'
+FLASK_SECRET_KEY=<paste-generated-secret>
+AWS_REGION=us-east-1
+FLASK_DEBUG=0
+FLASK_PORT=5000
+SNS_USER_TOPIC_ARN=<arn-of-StockerUserAccountTopic>
+SNS_TXN_TOPIC_ARN=<arn-of-StockerTransactionTopic>
+EOF
+python3 setup_dynamodb.py
+nohup python3 app.py > flask.log 2>&1 &
+curl http://localhost:5000/health
+```
+Then open `http://<EC2-PUBLIC-IP>:5000` in your browser (plain `http`, not `https`). Keep the app running while hitting task 5 Validate.
