@@ -1,8 +1,10 @@
 __pycache__/
 *.pyc
 .env
+*.pem
 .venv/
 venv/
 *.log
 .pytest_cache/
 instance/
+*pem
