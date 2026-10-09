@@ -18,6 +18,12 @@ without SNS publish rights (missed notifications are logged, trading still works
 `deploy/iam-stocker-ec2-policy.json` / `iam-trust-policy.json` remain the
 best-practice reference for non-lab deployments.
 
+### Troven Labs SNS names (task 4)
+Create **Standard** topics exactly named **`StockerUserAccountTopic`** and
+**`StockerTransactionTopic`**, each with a confirmed **Email** subscription.
+Save both Topic ARNs — on EC2 they become `SNS_USER_TOPIC_ARN` (user account
+topic) and `SNS_TXN_TOPIC_ARN` (transaction topic) in `.env`.
+
 ## Epic 4: SNS topics
 ```bash
 aws sns create-topic --name stocker-user-events --region us-east-1
